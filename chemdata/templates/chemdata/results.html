@@ -1,0 +1,38 @@
+{% extends 'chemdata/home.html'%}
+
+{% block results %}
+<p>{{message}}</p>
+{% if Comps %}
+<table>
+    <tr>
+        <th>Compound code</th>
+        <th>Maker</th>
+        <th>Cas-number</th>
+        <th>Name</th>
+        <th>Purity</th>
+        <th>Pack</th>
+        <th>Price</th>
+        <th>Stock</th>
+    </tr>
+
+    {% for Comp in Comps %}
+    <tr>
+        <td>{{ Comp.code }}</td>
+        <td>{{ Comp.maker }}</td>
+        <td>{{ Comp.cas }}</td>
+        <td>{{ Comp.name }}</td>
+        <td>{{ Comp.pury }}</td>
+        <td>{{ Comp.pack }}</td>
+        <td>{{ Comp.price }}</td>
+        <td>{{ Comp.stock }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+{% endif %}
+
+{% if error%}
+<p>{{error}}</p>
+{% endif %}
+
+{% endblock %}

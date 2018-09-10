@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>crawler homepage</title>
+    </head>
+    <body>
+        <h1>Price crawler homepage</h1>
+        <p>Please input the cas-number:</p>
+        <form action="/results/" method="POST">
+            {% csrf_token %}
+        <input type="text" name="cas">
+        <input type="submit" value="Submit">
+        </form>
+        {% block results %}
+        {% endblock %}
+    </body>
+</html>
