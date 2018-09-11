@@ -15,18 +15,20 @@
         <th>Stock</th>
     </tr>
 
-    {% for Comp in Comps %}
-    <tr>
-        <td>{{ Comp.code }}</td>
-        <td>{{ Comp.maker }}</td>
-        <td>{{ Comp.cas }}</td>
-        <td>{{ Comp.name }}</td>
-        <td>{{ Comp.pury }}</td>
-        <td>{{ Comp.pack }}</td>
-        <td>{{ Comp.price }}</td>
-        <td>{{ Comp.stock }}</td>
-    </tr>
-    {% endfor %}
+    <tbody>
+        {% for Comp in Comps %}
+        <tr>
+            <td>{{ Comp.code }}</td>
+            <td>{{ Comp.maker }}</td>
+            <td>{{ Comp.cas }}</td>
+            <td>{{ Comp.name }}</td>
+            <td>{{ Comp.pury }}</td>
+            <td>{{ Comp.pack }}</td>
+            <td>{{ Comp.price }}</td>
+            <td>{{ Comp.stock }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 
 </table>
 {% endif %}

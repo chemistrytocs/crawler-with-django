@@ -1,16 +1,44 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>crawler homepage</title>
-    </head>
-    <body>
-        <h1>Price crawler homepage</h1>
-        <p>Please input the cas-number:</p>
-        <form action="/results/" method="POST">
-            {% csrf_token %}
+
+<head>
+    <title>crawler homepage</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            font-family: Futura, Arial, sans-serif;
+        }
+            
+        th,td {
+            padding: .65em;
+        }
+            
+        th {
+            background: #000;
+            border: 1px solid #777;
+            color: #fff;
+        }
+            
+        td {
+            border: 1px solid#777;
+        }
+            
+        tbody tr:nth-child(odd) {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Price crawler homepage</h1>
+    <p>Please input the cas-number:</p>
+    <form action="/results/" method="POST">
+        {% csrf_token %}
         <input type="text" name="cas">
         <input type="submit" value="Submit">
-        </form>
-        {% block results %}
-        {% endblock %}
-    </body>
+    </form>
+    {% block results %}
+    {% endblock %}
+</body>
+
 </html>
