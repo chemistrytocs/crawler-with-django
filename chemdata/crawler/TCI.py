@@ -5,45 +5,54 @@ from chemdata.models import Compound
 
 
 def get_table(html):  # get the price information from TCI website
-    path = '//table[@class="comp-tbl"]//span/text()|//table[@class="price-tbl"]//td//text()'
-    _result = html.xpath(path)
-    return _result
+    result = [[], []]
+    # get compound information
+    for comp_tbl in html.xpath('//table[@class="comp-tbl"]'):
+        comp = {}
+        for a in comp_tbl.xpath('.//tr'):
+            b = a.xpath('.//span/text()')
+            if b[0] in ["製品コード","製品名",'純度/試験方法',"CAS RN"]: # the position of necessary data
+                comp[b[0]] = b[1]
+        result[0].append(comp)
+    # get price information
+    for comp_price in html.xpath('//table[@class="price-tbl"]'):
+        comp = []
+        for elem in comp_price.xpath('.//tr[position()>2]'):
+            comp_d_s = []
+            for n, i in enumerate(elem.xpath('.//td/text()')):
+                if n in [1, 3, 6, 8, 10]:  # the position of necessary data in table
+                    comp_d_s.append(i.strip())
+            comp.append(comp_d_s)
+        result[1].append(comp)
+    return result  # [[compound information],[price information]]
 
 
-def separate(original_data):  # extract and separate data from original html
-    b = []
-    c = []
-    for i in original_data:  # separate data for each compound
-        i = i.strip()  # extract data
-        b.append(i)
-        if re.match('製品コード', i):
-            c.append(b[:-1])
-            b = ['製品コード']
-    c.append(b)
-    c = c[1:]
-    return c
-
-
-def get_data(_l, cas):
+def separate(_l, cas):  # clean up the data and save it to dict
     a = {}
     b = []
-
-    def _next(_list, _b):
-        _a = _list[_list.index(_b)+1]
-        return _a
-    for list in _l:  # save data by dict
-        if _next(list, "CAS RN") == cas:
-            a["code"] = _next(list, "製品コード")
-            a["name"] = _next(list, "製品名")
-            a["pury"] = _next(list, '純度/試験方法')
-            a["cas"] = _next(list, "CAS RN")
-            a["pack"] = _next(list, '包装単位')
-            a["price"] = int(re.sub(r'[^0-9\.]*', '', _next(list, '価格')))
-            a["stock"] = '川口:{};尼崎:{};保管在庫:{}'.format(
-                _next(list, '埼玉県(川口)'), _next(list, '兵庫県(尼崎)'), _next(list, '保管在庫'))
-            a['maker']='tci'
-            b.append(a)
-            a = {}
+    for n, comp in enumerate(_l[0]):  # separate compound
+        if comp["CAS RN"] == cas:  # check data
+            a["code"] = comp["製品コード"]
+            a["name"] = comp["製品名"]
+            a["pury"] = comp['純度/試験方法']
+            a["cas"] = comp["CAS RN"]
+            a['maker'] = 'tci'
+            if len(_l[1][n]) == 1:
+                i = _l[1][n][0]
+                a["pack"] = i[0]
+                a["price"] = int(re.sub(r'[^0-9\.]*', '', i[1])) # clean up price to int
+                a["stock"] = '川口:{};尼崎:{};保管在庫:{}'.format(
+                    i[2], i[3], i[4])
+                b.append(a)
+                a = {}
+            else:  # separate for different pack
+                for i in _l[1][n]:
+                    a["pack"] = i[0]
+                    a["price"] = int(re.sub(r'[^0-9\.]*', '', i[1]))
+                    a["stock"] = '川口:{};尼崎:{};保管在庫:{}'.format(
+                        i[2], i[3], i[4])
+                    b.append(a.copy())
+                a = {}
     return b
 
 
@@ -61,10 +70,10 @@ def tci(cas):  # TCI crawler
         return message
     html = etree.HTML(req.content)
     try:
-        results = get_data(separate(get_table(html)), cas)
+        results = separate(get_table(html), cas)
     except BaseException:
         message = 'Fail in website data!'
-    
+
     try:
         for i in results:
             elem = Compound()
