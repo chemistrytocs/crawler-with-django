@@ -19,9 +19,13 @@ def get_table(html):  # get the price information from TCI website
         comp = []
         for elem in comp_price.xpath('.//tr[position()>2]'):
             comp_d_s = []
-            for n, i in enumerate(elem.xpath('.//td/text()')):
-                if n in [1, 3, 6, 8, 10]:  # the position of necessary data in table
-                    comp_d_s.append(i.strip())
+            for i in elem.xpath('.//td'):# get the data from original table
+                i = i.xpath('./text()')
+                for i1 in i:
+                    i1.strip()
+                    if i1:
+                        i =i1.strip()
+                comp_d_s.append(i)
             comp.append(comp_d_s)
         result[1].append(comp)
     return result  # [[compound information],[price information]]
@@ -64,7 +68,7 @@ def tci(cas):  # TCI crawler
     }
     req = requests.get(url=url, headers=headers)
     if req.status_code == 200:
-        message = "TCI requests successfully!"
+        message = "TCI requests successfully!\n If no data, please input it once again in english number mode"
     else:
         message = "Fail in connect!"
         return message

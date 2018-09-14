@@ -1,8 +1,13 @@
 {% extends 'chemdata/home.html'%}
-
 {% block results %}
 <p>{{message}}</p>
 {% if Comps %}
+<p>You can check the price information by the following links:</p>
+<a href={{links.tci}} target="_blank">tci</a>
+<a href={{links.wako}} target="_blank">wako</a>
+<a href={{links.kanto}} target="_blank">kanto</a>
+<a href={{links.aldrich}} target="_blank">aldrich</a>
+<p> </p>
 <table>
     <tr>
         <th>Compound code</th>
